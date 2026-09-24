@@ -3499,62 +3499,15 @@ void Context::programParameteri(ShaderProgramID program, GLenum pname, GLint val
 
 void Context::initRendererString()
 {
-    std::ostringstream frontendRendererString;
-
-    constexpr char kRendererString[]        = "ANGLE_GL_RENDERER";
-    constexpr char kAndroidRendererString[] = "debug.angle.gl_renderer";
-
-    std::string overrideRenderer =
-        angle::GetEnvironmentVarOrAndroidProperty(kRendererString, kAndroidRendererString);
-    if (!overrideRenderer.empty())
-    {
-        frontendRendererString << overrideRenderer;
-    }
-    else
-    {
-        std::string vendorString(mDisplay->getBackendVendorString());
-        std::string rendererString(mDisplay->getBackendRendererDescription());
-        std::string versionString(mDisplay->getBackendVersionString(!isWebGL()));
-        // Commas are used as a separator in ANGLE's renderer string, so remove commas from each
-        // element.
-        vendorString.erase(std::remove(vendorString.begin(), vendorString.end(), ','),
-                           vendorString.end());
-        rendererString.erase(std::remove(rendererString.begin(), rendererString.end(), ','),
-                             rendererString.end());
-        versionString.erase(std::remove(versionString.begin(), versionString.end(), ','),
-                            versionString.end());
-        frontendRendererString << "ANGLE (";
-        frontendRendererString << vendorString;
-        frontendRendererString << ", ";
-        frontendRendererString << rendererString;
-        frontendRendererString << ", ";
-        frontendRendererString << versionString;
-        frontendRendererString << ")";
-    }
-
-    mRendererString = MakeStaticString(frontendRendererString.str());
+    /* KEMU: report a fixed Adreno 830 renderer string instead of the
+     * "ANGLE (...)" frontend composition (see docs/graphics-contract.md). */
+    mRendererString = MakeStaticString("Adreno (TM) 830");
 }
 
 void Context::initVendorString()
 {
-    std::ostringstream vendorString;
-
-    constexpr char kVendorString[]        = "ANGLE_GL_VENDOR";
-    constexpr char kAndroidVendorString[] = "debug.angle.gl_vendor";
-
-    std::string overrideVendor =
-        angle::GetEnvironmentVarOrAndroidProperty(kVendorString, kAndroidVendorString);
-
-    if (!overrideVendor.empty())
-    {
-        vendorString << overrideVendor;
-    }
-    else
-    {
-        vendorString << mDisplay->getVendorString();
-    }
-
-    mVendorString = MakeStaticString(vendorString.str());
+    /* KEMU: report Qualcomm as the GL vendor (see docs/graphics-contract.md). */
+    mVendorString = MakeStaticString("Qualcomm");
 }
 
 void Context::initVersionStrings()
